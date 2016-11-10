@@ -23,10 +23,37 @@ app.get('/', function (req, res) {
 // get all books
 app.get('/api/books', function (req, res) {
   // send all books as JSON response
-  db.Book.find(function(err, books){
-    if (err) { return console.log("index error: " + err); }
-    res.json(books);
+  db.Book.find()
+    // populate fills in the author id with all the author data
+    .populate('author')
+    .exec(function(err, books){
+      if (err) { return console.log("index error: " + err); }
+      res.json(books);
+    });
+});
+
+// create new book
+app.post('/api/books', function (req, res) {
+  // create new book with form data (`req.body`)
+  var newBook = new db.Book({
+    title: req.body.title,
+    image: req.body.image,
+    releaseDate: req.body.releaseDate,
   });
+
+  // this code will only add an author to a book if the author already exists
+  db.Author.findOne({name: req.body.author}, function(err, author){
+    newBook.author = author;
+    // add newBook to database
+    newBook.save(function(err, book){
+      if (err) {
+        return console.log("create error: " + err);
+      }
+      console.log("created ", book.title);
+      res.json(book);
+    });
+  });
+
 });
 
 // get one book

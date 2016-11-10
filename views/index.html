@@ -40,7 +40,8 @@
             <hr>
             <p>
               <b>{{title}}</b>
-              by {{author}}
+              <!-- just this next line is what needs to be changed! -->
+              by {{author.name}}
               <button type="button" name="button" class="deleteBtn btn btn-danger pull-right" data-id={{_id}}>Delete</button>
             </p>
             {{/each}}
